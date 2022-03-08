@@ -49,7 +49,7 @@ def parse_data(data, address):
         # <: little endian
         # f: float | i: int | I: unsigned int | l: long int | s: string
         # number: how many values of the following type
-        chunks = struct.unpack("<4f2Iil", single_measurement)
+        chunks = struct.unpack("<4f2Ili", single_measurement)
 
         # construct InfluxDB insert message
         influx_message = {
@@ -61,16 +61,16 @@ def parse_data(data, address):
                        "lux": chunks[3],
                        "count": chunks[4],
                        "wifi_count": chunks[5],
-                       "prediction": chunks[6]},
+                       "prediction": chunks[7]},
             # timestamp needs to be in nanosecond precision
-            "time": int(chunks[7] * 1e9)}
+            "time": chunks[6]}
 
         # add InfluxDB insert message to list
         influx_points.append(influx_message)
 
     # send insert messages to InfluxDB
     print("Write influx points: {}".format(influx_points))
-    influx.write_points(influx_points, protocol="json")
+    influx.write_points(influx_points, time_precision="s")  # protocol="json",
 
 
 ################################################################################

@@ -56,8 +56,8 @@ void setup() {
                                        lux,
                                        measure_ctr,
                                        wifi_ctr,
-                                       lstm_output,
-                                       timestamp};
+                                       timestamp,
+                                       lstm_output};
 
         // send initial measurement
         send_tcp_package(measure_ptr, sizeof(measurement_t));
@@ -99,8 +99,8 @@ void loop() {
                                    lux,
                                    measure_ctr,
                                    wifi_ctr,
-                                   lstm_output,
-                                   timestamp};
+                                   timestamp,
+                                   lstm_output};
 
     print_localtime(&timestamp);
     print_measurement(&measure_curr);

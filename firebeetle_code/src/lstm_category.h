@@ -1,13 +1,16 @@
-#include "network_category_v2.h"
+#include "network_category_v3.h"
 
 
 // initialize lstm cell state and hidden state
 RTC_DATA_ATTR float lstm_ct[lstm_units] = {0};
 RTC_DATA_ATTR float lstm_ht[lstm_units] = {0};
+// initialize persistent memory for lstm input
+RTC_DATA_ATTR float lstm_input[feature_width * step_size] = {0};
 // initialize lstm prediction
-RTC_DATA_ATTR int lstm_output = -1;
+RTC_DATA_ATTR int lstm_output = 0;
 
-const int tanh_lookup_len = sizeof(tanh_lookup) / sizeof(tanh_lookup[0]);
+const int tanh_lookup_len  = sizeof(tanh_lookup) / sizeof(tanh_lookup[0]);
+const int lstm_input_width = feature_width * step_size;
 
 
 /**
@@ -125,12 +128,24 @@ float lstm_scale_input(float input) {
  * The predicted category is stored in the `lstm_output` variable
  */
 void lstm_prediction(float input) {
-    // run prediction only every n-th time
-    if (measure_ctr % step_size == 0) {
-        lstm_step(lstm_scale_input(input));
-        lstm_dense_layer();
-    } else {
+    // store current lstm input in persistent input vector
+    int current_position         = (measure_ctr - 1) % lstm_input_width;
+    lstm_input[current_position] = lstm_scale_input(input);
+
+    // return if measure counter is smaller than required lstm window size
+    if ((measure_ctr - 1) < lstm_input_width) {
         lstm_output = -1;
+        return;
+    }
+
+    // reset lstm state
+    lstm_reset_state();
+
+    // take the last n time steps and feed them into the lstm network
+    int loop_start = (current_position + step_size) % lstm_input_width;
+    for (int i = 0; i < lstm_input_width; i += step_size) {
+        lstm_step(lstm_input[(loop_start + i) % lstm_input_width]);
+        lstm_dense_layer();
     }
 
 #if SERIAL_MONITOR
