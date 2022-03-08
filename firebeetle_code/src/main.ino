@@ -28,16 +28,30 @@ void setup() {
     // sleep timer in micro seconds
     esp_sleep_enable_timer_wakeup(SLEEP_SECONDS * 1000000);
 
+    config_adc();
+    config_luxmeter();
+
     if (boot_ctr == 0) {
         // start wifi on first boot to get time synchronization
         connect_wifi();
+
+        // take initial measurement
+        vcap  = get_cap_voltage();
+        icell = get_cell_current();
+        lux   = get_lux();
+        getLocalTime(&local, 0);
+        timestamp = mktime(&local);
+        ++measure_ctr;
+
+        measure_curr = (measurement_t){
+            vcap, old_volt, icell, lux, measure_ctr, wifi_ctr, timestamp};
+
+        // send initial measurement
+        send_tcp_package(measure_ptr, sizeof(measurement_t));
         // and immediately disconnect
         disconnect_wifi();
     }
     ++boot_ctr;
-
-    config_adc();
-    config_luxmeter();
 }
 
 

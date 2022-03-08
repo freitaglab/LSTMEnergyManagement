@@ -42,7 +42,7 @@ def parse_data(data, address):
     influx_points = []
 
     datastream = io.BytesIO(data)
-    for i in range(PACKAGE_SIZE // MEASUREMENT_SIZE):
+    for i in range(len(data) // MEASUREMENT_SIZE):
         single_measurement = datastream.read(MEASUREMENT_SIZE)
 
         # unpack the binary string into separate variables
@@ -68,6 +68,7 @@ def parse_data(data, address):
         influx_points.append(influx_message)
 
     # send insert messages to InfluxDB
+    print("Write influx points: {}".format(influx_points))
     influx.write_points(influx_points, protocol="json")
 
 
@@ -114,8 +115,8 @@ def register_tcp_socket(selector):
 def accept_tcp_connection(selector, socket):
     conn, addr = socket.accept()
     conn.setblocking(False)
-    print("Accepted TCP connection from {} (IP: {})".format(
-        SENSOR_NAMES[addr[0]], addr[0]))
+    # print("Accepted TCP connection from {} (IP: {})".format(
+    #     SENSOR_NAMES[addr[0]], addr[0]))
     # register connection socket to selector
     selector.register(conn, selectors.EVENT_READ, data=read_tcp_package)
 
@@ -139,7 +140,7 @@ def read_tcp_package(selector, socket):
     print("Got TCP package from {} (IP: {}) | size {}".format(
         SENSOR_NAMES[addr[0]], addr[0], len(data)))
 
-    if len(data) == PACKAGE_SIZE:
+    if (len(data) == PACKAGE_SIZE) or (len(data) == MEASUREMENT_SIZE):
         parse_data(data, addr[0])
     else:
         print("ERROR: Received package had wrong size", len(data))
