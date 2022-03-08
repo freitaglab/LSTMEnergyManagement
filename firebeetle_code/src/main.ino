@@ -1,5 +1,6 @@
 #include "config.h"
 #include "lstm_category.h"
+#include "workload.h"
 
 
 // reserve measurement buffer in persistent memory
@@ -134,6 +135,31 @@ void loop() {
 
 
     // workload here
+#if SERIAL_MONITOR
+    Serial.printf("\nWorkload started!\n");
+#endif
+
+    switch (lstm_output) {
+        case 0:
+            // workload for 90mindark scenario
+            workload(2);
+            break;
+        case 1:
+            // workload for const illumination scenario
+            workload(4);
+            break;
+        case 2:
+            // workload for window scenario
+            workload(1);
+            break;
+        default:
+            // default in case of no prediction (-1) or something went wrong
+            break;
+    }
+
+#if SERIAL_MONITOR
+    Serial.printf("\nWorkload done!\n");
+#endif
 
 
     // capture voltage right before shutdown
