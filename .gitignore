@@ -9,3 +9,6 @@ firebeetle_code/.gitignore
 
 # python cache directory
 __pycache__/
+
+# python environment
+.zombie-env/
