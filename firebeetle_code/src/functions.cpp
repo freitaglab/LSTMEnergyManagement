@@ -10,14 +10,15 @@ void print_measurement(measurement_t* mmt) {
     char str[128];
     // print measurement on serial port
     sprintf(str,
-            "%.3f V, %.3f uA, %7.2f lux, %4d, %3d, %ld, %.3f V",
+            "%.3f V, %.3f V, %.3f uA, %7.2f lux, %4d, %3d, pred: %-2d,  %ld",
             mmt->voltage,
+            mmt->old_voltage,
             mmt->cell_current,
             mmt->light,
             mmt->measurement_count,
             mmt->wifi_count,
-            mmt->timestamp,
-            mmt->old_voltage);
+            mmt->prediction,
+            mmt->timestamp);
     Serial.println(str);
 #endif
 }

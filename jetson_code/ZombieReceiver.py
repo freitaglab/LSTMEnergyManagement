@@ -12,7 +12,7 @@ UDP_PORT = 6819
 TCP_PORT = 6819
 
 # or get host ip from network interface
-HOST_IP = ni.ifaddresses("wlan0")[ni.AF_INET][0]["addr"]
+HOST_IP = ni.ifaddresses("eth0")[ni.AF_INET][0]["addr"]
 
 # crate InfluxDB client and connect to database
 INFLUX_HOST = "localhost"
@@ -27,7 +27,7 @@ INFLUX_MEASUREMENT = "test123"
 
 # define size of UDP package and size of single measurements
 PACKAGE_SIZE = 1024
-MEASUREMENT_SIZE = 28
+MEASUREMENT_SIZE = 32
 
 # define lookup table for IP addresses to sensor names
 SENSOR_NAMES = {"192.168.8.111": "Z1",
@@ -49,7 +49,7 @@ def parse_data(data, address):
         # <: little endian
         # f: float | i: int | I: unsigned int | l: long int | s: string
         # number: how many values of the following type
-        chunks = struct.unpack("<4f2Il", single_measurement)
+        chunks = struct.unpack("<4f2Iil", single_measurement)
 
         # construct InfluxDB insert message
         influx_message = {
@@ -60,9 +60,10 @@ def parse_data(data, address):
                        "cell_current": chunks[2],
                        "lux": chunks[3],
                        "count": chunks[4],
-                       "wifi_count": chunks[5]},
+                       "wifi_count": chunks[5],
+                       "prediction": chunks[6]},
             # timestamp needs to be in nanosecond precision
-            "time": int(chunks[6] * 1e9)}
+            "time": int(chunks[7] * 1e9)}
 
         # add InfluxDB insert message to list
         influx_points.append(influx_message)

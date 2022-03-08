@@ -1,4 +1,5 @@
 #include "config.h"
+#include "lstm_category.h"
 
 
 // reserve measurement buffer in persistent memory
@@ -46,8 +47,17 @@ void setup() {
         timestamp = mktime(&local);
         ++measure_ctr;
 
-        measure_curr = (measurement_t){
-            vcap, old_volt, icell, lux, measure_ctr, wifi_ctr, timestamp};
+        // run LSTM prediction
+        lstm_prediction(lux);
+
+        measure_curr = (measurement_t){vcap,
+                                       old_volt,
+                                       icell,
+                                       lux,
+                                       measure_ctr,
+                                       wifi_ctr,
+                                       lstm_output,
+                                       timestamp};
 
         // send initial measurement
         send_tcp_package(measure_ptr, sizeof(measurement_t));
@@ -79,9 +89,18 @@ void loop() {
     // advance persistent measurement counter
     ++measure_ctr;
 
+    // run LSTM prediction
+    lstm_prediction(lux);
+
     // store current measurement as measurement_t struct
-    measure_curr = (measurement_t){
-        vcap, old_volt, icell, lux, measure_ctr, wifi_ctr, timestamp};
+    measure_curr = (measurement_t){vcap,
+                                   old_volt,
+                                   icell,
+                                   lux,
+                                   measure_ctr,
+                                   wifi_ctr,
+                                   lstm_output,
+                                   timestamp};
 
     print_localtime(&timestamp);
     print_measurement(&measure_curr);

@@ -43,6 +43,7 @@ typedef struct measurement_t {
     float        light;
     unsigned int measurement_count;
     unsigned int wifi_count;
+    int          prediction;
     long int     timestamp;
 } measurement_t;
 
