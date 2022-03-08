@@ -32,6 +32,9 @@ void setup() {
     config_luxmeter();
 
     if (boot_ctr == 0) {
+        // 10 seconds initial delay to position the beetle
+        delay(10000);
+
         // start wifi on first boot to get time synchronization
         connect_wifi();
 
@@ -48,7 +51,10 @@ void setup() {
 
         // send initial measurement
         send_tcp_package(measure_ptr, sizeof(measurement_t));
-        // and immediately disconnect
+
+        // delay to give the wifi time to transmit the package
+        delay(300);
+        // and then disconnect wifi
         disconnect_wifi();
     }
     ++boot_ctr;
@@ -98,6 +104,8 @@ void loop() {
             send_tcp_package(persistent_buffer, MEASUREMENT_BUFFER_SIZE);
             send_flash_to_tcp();
 
+            // delay to give the wifi time to transmit the package
+            delay(300);
             disconnect_wifi();
         }
 

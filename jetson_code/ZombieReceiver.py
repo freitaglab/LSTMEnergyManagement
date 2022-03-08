@@ -7,12 +7,12 @@ import influxdb
 
 
 # define ip and ports to listen
-HOST_IP = "192.168.8.100"
+HOST_IP = "192.168.8.101"
 UDP_PORT = 6819
 TCP_PORT = 6819
 
 # or get host ip from network interface
-HOST_IP = ni.ifaddresses("wlan1")[ni.AF_INET][0]["addr"]
+HOST_IP = ni.ifaddresses("wlan0")[ni.AF_INET][0]["addr"]
 
 # crate InfluxDB client and connect to database
 INFLUX_HOST = "localhost"

@@ -11,7 +11,7 @@ const IPAddress local_ip(192, 168, 8, 112);
 const IPAddress gateway(192, 168, 8, 1);
 const IPAddress subnet(255, 255, 255, 0);
 
-const IPAddress server_ip(192, 168, 8, 100);
+const IPAddress server_ip(192, 168, 8, 101);
 const uint16_t  udp_port = 6819;
 const uint16_t  tcp_port = 6819;
 
