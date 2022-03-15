@@ -3,6 +3,7 @@
 # Author:   Michael Rinderle
 # Email:    michael.rinderle@tum.de
 # Created:  18.05.2021
+# Revision: 23.08.2021 - Add sanity check
 #
 # Description: Plot recorded timeseries data
 #
@@ -43,9 +44,22 @@ def plot_zombie_data(filename, xaxis_relative=False):
         voltage = np.array(grp.get("voltage")[()])
         cell_current = np.array(grp.get("cell_current")[()])
         lux = np.array(grp.get("lux")[()])
-        old_voltage = np.array(grp.get("old_voltage")[()])
         count = np.array(grp.get("count")[()])
         wifi_count = np.array(grp.get("wifi_count")[()])
+
+    # sanity check (counters increase monotonically)
+    check = np.logical_or(np.diff(count) < 0, np.diff(wifi_count) < 0)
+    if check.any():  # .
+        # filter data in case of any problem
+        problem_index = np.argwhere(check).flatten()[0] + 1
+        time = time[:problem_index]
+        voltage = voltage[:problem_index]
+        cell_current = cell_current[:problem_index]
+        lux = lux[:problem_index]
+        count = count[:problem_index]
+        wifi_count = wifi_count[:problem_index]
+        print(f"Counters not monotonically increasing in file {filename!r}")
+        print(f"The problem occured at index {problem_index} of {len(time)}")
 
     if xaxis_relative:
         # create x axis relative to first timestep
@@ -134,7 +148,8 @@ if __name__ == "__main__":
     # plt.show()
 
     # list all hdf5 files in data directory
-    hdf5_files = [f for f in os.listdir(DATA_DIR) if re.match(r".*\.h5", f)]
+    pattern = re.compile(r"\d{4}-\d{2}-\d{2}_\w+.h5")
+    hdf5_files = [f for f in os.listdir(DATA_DIR) if pattern.match(f)]
     hdf5_files.sort()
 
     picture_directory = os.path.abspath(os.path.join(THIS_DIR, "../pictures"))
