@@ -35,4 +35,5 @@ BH1750 lightMeter;
 RTC_DATA_ATTR unsigned int boot_ctr    = 0;
 RTC_DATA_ATTR unsigned int measure_ctr = 0;
 RTC_DATA_ATTR unsigned int wifi_ctr    = 0;
+RTC_DATA_ATTR unsigned int dhry_ctr    = 0;
 RTC_DATA_ATTR unsigned int flash_ctr   = 0;

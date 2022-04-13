@@ -15,7 +15,7 @@ void print_measurement(measurement_t* mmt) {
             mmt->cell_current,
             mmt->light,
             mmt->measurement_count,
-            mmt->wifi_count,
+            mmt->dhry_count,
             mmt->timestamp,
             mmt->old_voltage,
             mmt->prediction);

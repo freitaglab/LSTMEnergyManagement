@@ -1,4 +1,5 @@
 #include "config.h"
+#include "dhryload.h"
 #include "lstm_category.h"
 #include "workload.h"
 
@@ -56,7 +57,7 @@ void setup() {
                                        icell,
                                        lux,
                                        measure_ctr,
-                                       wifi_ctr,
+                                       dhry_ctr,
                                        timestamp,
                                        lstm_output};
 
@@ -99,7 +100,7 @@ void loop() {
                                    icell,
                                    lux,
                                    measure_ctr,
-                                   wifi_ctr,
+                                   dhry_ctr,
                                    timestamp,
                                    lstm_output};
 
@@ -142,18 +143,30 @@ void loop() {
     switch (lstm_output) {
         case 0:
             // workload for 90mindark scenario
-            workload(2);
+            // workload(2);
+            if (get_cap_voltage() > WORKLOAD_VOLTAGE + 0.3) {
+                dhryload();
+            }
             break;
         case 1:
             // workload for const illumination scenario
-            workload(4);
+            // workload(3);
+            if (get_cap_voltage() > WORKLOAD_VOLTAGE) {
+                dhryload();
+            }
             break;
         case 2:
             // workload for window scenario
-            workload(1);
+            // workload(1);
+            if (get_cap_voltage() > WORKLOAD_VOLTAGE + 0.3) {
+                dhryload();
+            }
             break;
         default:
             // default in case of no prediction (-1) or something went wrong
+            if (get_cap_voltage() > WORKLOAD_VOLTAGE + 0.3) {
+                dhryload();
+            }
             break;
     }
 

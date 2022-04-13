@@ -28,6 +28,7 @@
  * Definition of voltage limits and sleep times
  */
 #define WIFI_DOWN_VOLTAGE      3.3
+#define WORKLOAD_VOLTAGE       3.9
 #define STOP_MEASURING_VOLTAGE 2.9
 #define BROWNOUT_VOLTAGE       2.8
 #define SLEEP_SECONDS          300
@@ -42,7 +43,7 @@ typedef struct measurement_t {
     float        cell_current;
     float        light;
     unsigned int measurement_count;
-    unsigned int wifi_count;
+    unsigned int dhry_count;
     long int     timestamp;
     int          prediction;
 } measurement_t;
@@ -110,6 +111,7 @@ extern const uint16_t  tcp_port;
 extern RTC_DATA_ATTR unsigned int boot_ctr;
 extern RTC_DATA_ATTR unsigned int measure_ctr;
 extern RTC_DATA_ATTR unsigned int wifi_ctr;
+extern RTC_DATA_ATTR unsigned int dhry_ctr;
 extern RTC_DATA_ATTR unsigned int flash_ctr;
 
 
