@@ -1,32 +1,14 @@
-# Prerequisites
-*.d
+# editor config directory
+.vscode/
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# PlatformIO cache directory
+.pio/
 
-# Precompiled Headers
-*.gch
-*.pch
+# ignore the annoying automatically created PlatformIO .gitignore file
+firebeetle_code/.gitignore
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+# python cache directory
+__pycache__/
 
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+# python environment
+.zombie-env/
